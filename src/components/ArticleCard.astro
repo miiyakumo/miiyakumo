@@ -1,0 +1,15 @@
+---
+import { withBase } from '../lib/paths';
+import type { CollectionEntry } from 'astro:content';
+interface Props { entry: CollectionEntry<'articles'> }
+const { entry } = Astro.props;
+const kinds = { log: '日志', essay: '随笔', tutorial: '教程', fanwork: '二创' };
+const date = entry.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
+---
+<article class="article-card">
+  <div class="card-kicker"><span>{kinds[entry.data.kind]}{entry.data.fandom && ` / ${entry.data.fandom}`}</span><time datetime={entry.data.pubDate.toISOString()}>{date}</time></div>
+  {entry.data.cover && <img class="card-cover" src={withBase(entry.data.cover)} alt="" loading="lazy" />}
+  <h3><a href={withBase(`/articles/${entry.id}/`)}>{entry.data.title}<span aria-hidden="true">↗</span></a></h3>
+  <p>{entry.data.summary}</p>
+  {entry.data.tags.length > 0 && <div class="card-foot">{entry.data.tags.map(tag => <span class="tag">{tag}</span>)}</div>}
+</article>

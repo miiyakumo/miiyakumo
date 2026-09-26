@@ -1,0 +1,20 @@
+---
+import { withBase } from '../lib/paths';
+import type { CollectionEntry } from 'astro:content';
+interface Props { entry: CollectionEntry<'projects'>; index?: number }
+const { entry, index = 0 } = Astro.props;
+const { data } = entry;
+const statuses = { active: '进行中', complete: '已完成', paused: '暂停', archived: '归档' };
+const kinds = { game: '游戏', site: '网站', tool: '工具', experiment: '实验' };
+---
+<article class="project-card">
+  <div class="project-floor" aria-hidden="true"><span>{String(index + 1).padStart(2, '0')}</span><span class="floor-lines"></span></div>
+  <div class="project-content">
+    <div class="card-kicker"><span>{kinds[data.kind]}</span><span class={`status ${data.status}`}><span aria-hidden="true"></span>{statuses[data.status]}</span></div>
+    <h3><a href={withBase(data.demoUrl)}>{data.title}</a></h3>
+    <p>{data.summary}</p>
+    <div class="project-base"><div class="project-tags">{data.tags.map(tag => <span>{tag}</span>)}</div>
+      <div class="project-actions"><a href={withBase(data.demoUrl)} aria-label={`打开项目：${data.title}`}>打开项目 <span aria-hidden="true">↗</span></a>{data.sourceUrl && <a href={data.sourceUrl} target="_blank" rel="noreferrer" aria-label={`${data.title}源码（新窗口）`}>源码 <span aria-hidden="true">↗</span></a>}</div>
+    </div>
+  </div>
+</article>

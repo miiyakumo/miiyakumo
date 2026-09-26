@@ -1,0 +1,14 @@
+---
+import { getCollection } from 'astro:content';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+const entries = await getCollection('projects');
+---
+<SiteLayout title="筑塔之人 — miiyakumo" current="projects" description="功能、结构、优雅。">
+  <section class="shell projects-archive">
+    <header class="page-heading"><div><h1>筑塔之人</h1><p class="page-principles"><span>功能</span><span class="principle-divider" aria-hidden="true">·</span><span>结构</span><span class="principle-divider" aria-hidden="true">·</span><span>优雅</span></p></div></header>
+    <div class="project-archive-body">
+      {entries.length ? <div class="project-list">{entries.map((entry, index) => <ProjectCard entry={entry} index={index} />)}</div> : <p class="empty-state">暂无项目。</p>}
+    </div>
+  </section>
+</SiteLayout>

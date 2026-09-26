@@ -1,0 +1,47 @@
+---
+import { withBase } from '../lib/paths';
+import '../styles/global.css';
+interface Props {
+  title?: string;
+  description?: string;
+  current?: 'articles' | 'projects';
+}
+const {
+  title = '未竟之事 — miiyakumo',
+  description = '来吧！我们要建造一座城和一座塔。miiyakumo 的文章、作品与个人项目。',
+  current,
+} = Astro.props;
+const navItems = [
+  { href: '/articles/', label: '城中之囚', key: 'articles' },
+  { href: '/projects/', label: '筑塔之人', key: 'projects' },
+];
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f5f1e8" />
+    <meta name="description" content={description} />
+    <link rel="icon" href={withBase('/brand-icon.jpg')} type="image/jpeg" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+    <header class="site-header shell">
+      <a class="brand" href={withBase('/')} aria-label="miiyakumo 首页">
+        <img class="brand-icon" src={withBase('/brand-icon.jpg')} alt="" aria-hidden="true" />
+        <span>miiyakumo</span>
+      </a>
+      <nav class="site-nav" aria-label="主导航">
+        {navItems.map(item => <a href={withBase(item.href)} aria-current={current === item.key ? 'page' : undefined}>
+          {item.label}
+        </a>)}
+      </nav>
+    </header>
+    <main id="main" tabindex="-1"><slot /></main>
+    <footer class="site-footer shell">
+      <p>© {new Date().getFullYear()} miiyakumo</p>
+    </footer>
+  </body>
+</html>

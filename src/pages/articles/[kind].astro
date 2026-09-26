@@ -1,0 +1,19 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import ArticleArchive from '../../components/ArticleArchive.astro';
+export function getStaticPaths() {
+  return [
+    { params: { kind: 'logs' }, props: { kind: 'log', label: '日志' } },
+    { params: { kind: 'essays' }, props: { kind: 'essay', label: '随笔' } },
+    { params: { kind: 'tutorials' }, props: { kind: 'tutorial', label: '教程' } },
+    { params: { kind: 'fanworks' }, props: { kind: 'fanwork', label: '二创' } },
+  ];
+}
+const { kind, label } = Astro.props;
+---
+<SiteLayout title={`${label} · 文章 — miiyakumo`} current="articles" description={`${label}文章。`}>
+  <section class="shell">
+    <header class="page-heading"><h1>{label}</h1></header>
+    <ArticleArchive kind={kind} label={label} />
+  </section>
+</SiteLayout>

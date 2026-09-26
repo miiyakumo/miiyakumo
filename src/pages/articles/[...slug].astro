@@ -1,0 +1,41 @@
+---
+import { withBase } from '../../lib/paths';
+import { getCollection, render } from 'astro:content';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('articles', ({ data }) => !data.draft);
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const neighbors = (await getCollection('articles', ({ data }) => !data.draft))
+  .filter(other => other.id !== entry.id)
+  .map(other => ({ entry: other, shared: other.data.tags.filter(tag => entry.data.tags.includes(tag)).length }))
+  .filter(other => other.shared > 0)
+  .sort((a, b) => b.shared - a.shared || b.entry.data.pubDate.valueOf() - a.entry.data.pubDate.valueOf())
+  .slice(0, 3);
+const kind = { log: '日志', essay: '随笔', tutorial: '教程', fanwork: '二创' }[entry.data.kind];
+const kindPath = { log: 'logs', essay: 'essays', tutorial: 'tutorials', fanwork: 'fanworks' }[entry.data.kind];
+const date = entry.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<SiteLayout title={`${entry.data.title} — miiyakumo`} current="articles" description={entry.data.summary}>
+  <article class="shell prose-wrap">
+    <div class="prose-meta"><a href={withBase('/articles/')}>城中之囚</a><a href={withBase(`/articles/${kindPath}/`)}>{kind}</a>{entry.data.fandom && <span>{entry.data.fandom}</span>}<time datetime={entry.data.pubDate.toISOString()}>{date}</time></div>
+    <header class="prose">
+      <h1>{entry.data.title}</h1>
+      <p class="prose-summary">{entry.data.summary}</p>
+      {entry.data.cover && <img class="article-cover" src={withBase(entry.data.cover)} alt={entry.data.title} />}
+    </header>
+    {entry.data.contentNote && <p class="empty-state">内容提示：{entry.data.contentNote}</p>}
+    <div class="prose-body"><Content /></div>
+    <div class="card-foot">{entry.data.tags.map((tag) => <span class="tag">{tag}</span>)}</div>
+    <aside class="article-onward" aria-label="继续阅读">
+      {neighbors.length > 0 && <><h2>相关文章</h2>{neighbors.map(({ entry: neighbor }) => <ArticleCard entry={neighbor} />)}</>}
+      <a class="back-to-city" href={withBase('/articles/')}>← 全部文章</a>
+    </aside>
+  </article>
+</SiteLayout>

@@ -1,0 +1,26 @@
+---
+import { withBase } from '../lib/paths';
+import { getCollection } from 'astro:content';
+import ArticleCard from './ArticleCard.astro';
+interface Props { kind?: 'log' | 'essay' | 'tutorial' | 'fanwork'; label?: string }
+const { kind, label = '文章' } = Astro.props;
+const all = (await getCollection('articles', ({ data }) => !data.draft))
+  .sort((a,b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const entries = kind ? all.filter(entry => entry.data.kind === kind) : all;
+const filters = [
+  { slug: '', key: undefined, label: '全部' },
+  { slug: 'logs/', key: 'log', label: '日志' },
+  { slug: 'essays/', key: 'essay', label: '随笔' },
+  { slug: 'tutorials/', key: 'tutorial', label: '教程' },
+  { slug: 'fanworks/', key: 'fanwork', label: '二创' },
+];
+---
+<div class="archive-layout">
+  <aside class="archive-sidebar">
+    <nav class="filter-row" aria-label="文章类型">
+      {filters.map(filter => <a href={withBase(`/articles/${filter.slug}`)} aria-current={filter.key === kind ? 'page' : undefined}>{filter.label}</a>)}
+    </nav>
+  </aside>
+  {entries.length ? <div class="article-list">{entries.map(entry => <ArticleCard entry={entry} />)}</div> :
+    <p class="empty-state">暂无{label}。</p>}
+</div>
