@@ -1,5 +1,7 @@
-# 未竟之事
+# Miiyakumo = Miiyakumo
 
-来吧！我们要建造一座城和一座塔。
+学生desu
 
-[网站](https://miiyakumo.github.io/miiyakumo/) · [城中之囚](https://miiyakumo.github.io/miiyakumo/articles/) · [筑塔之人](https://miiyakumo.github.io/miiyakumo/projects/)
+目前主要涉足内核开发
+
+[主页](https://miiyakumo.github.io/miiyakumo/)
