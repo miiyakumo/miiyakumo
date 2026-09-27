@@ -1,55 +1,58 @@
----
-const point = (x: number, y: number, z = 0) => `${300 + (x - y)},${110 + (x + y) * .48 - z}`;
-const face = (points: number[][]) => points.map(([x, y, z]) => point(x, y, z)).join(' ');
-const blocks = [
-  { x: 14, y: 25, w: 35, d: 28, h: 23 },
-  { x: 66, y: 18, w: 31, d: 33, h: 32 },
-  { x: 15, y: 77, w: 28, d: 34, h: 34 },
-  { x: 66, y: 70, w: 39, d: 28, h: 19 },
-  { x: 17, y: 137, w: 37, d: 27, h: 21 },
-  { x: 76, y: 125, w: 29, d: 41, h: 39 },
-  { x: 17, y: 191, w: 40, d: 25, h: 28 },
-  { x: 124, y: 126, w: 35, d: 30, h: 21 },
-  { x: 80, y: 191, w: 32, d: 27, h: 17 },
-  { x: 141, y: 187, w: 33, d: 29, h: 30 },
-  { x: 190, y: 134, w: 31, d: 27, h: 27 },
-].sort((a, b) => (a.x + a.y) - (b.x + b.y));
----
-<svg class="architecture" viewBox="0 0 600 390" fill="none" role="img" aria-label="街巷向四周延展，层层构筑的红塔立于城中">
-  <g class="drawing-grid" stroke="currentColor" stroke-width=".6">
-    {[-20, 40, 100, 160, 220, 260].map(n => <>
-      <path d={`M${point(n, -20)} L${point(n, 260)}`} />
-      <path d={`M${point(-20, n)} L${point(260, n)}`} />
-    </>)}
-  </g>
-  <path d={`M${point(-8, 60)} L${point(242, 60)} M${point(116, -10)} L${point(116, 237)} M${point(-10, 177)} L${point(233, 177)}`} stroke="var(--rust)" stroke-width="1" stroke-dasharray="2 5" opacity=".5" />
-  <g stroke="var(--drawing-ink)" stroke-width="1" stroke-linejoin="round">
-    {blocks.map(({ x, y, w, d, h }, i) => <g>
-      <polygon points={face([[x,y+d,0],[x+w,y+d,0],[x+w,y+d,h],[x,y+d,h]])} fill={i === 3 || i === 7 ? 'var(--rust)' : 'var(--stone)'} />
-      <polygon points={face([[x+w,y,0],[x+w,y+d,0],[x+w,y+d,h],[x+w,y,h]])} fill={i === 3 || i === 7 ? 'var(--rust-dark)' : 'var(--stone-shade)'} />
-      <polygon points={face([[x,y,h],[x+w,y,h],[x+w,y+d,h],[x,y+d,h]])} fill="var(--paper)" />
-      <polyline points={face([[x+5,y+d-5,h],[x+5,y+5,h],[x+w-5,y+5,h]])} opacity=".45" />
-      {[8, 19].filter(n => n < w - 4).map(n => <path d={`M${point(x+n,y+d,8)} L${point(x+n,y+d,h-6)}`} stroke={i === 3 || i === 7 ? 'var(--paper)' : 'var(--drawing-ink)'} stroke-width="2.8" />)}
-    </g>)}
-    <polygon points={face([[145,24,0],[222,24,0],[222,102,0],[145,102,0]])} fill="var(--stone-shade)" />
-    <polygon points={face([[145,24,9],[222,24,9],[222,102,9],[145,102,9]])} fill="var(--stone)" />
-    <polygon points={face([[158,38,9],[208,38,9],[208,88,9],[158,88,9]])} fill="var(--rust)" />
-    <polygon points={face([[158,88,9],[208,88,9],[208,88,170],[158,88,170]])} fill="var(--rust)" />
-    <polygon points={face([[208,38,9],[208,88,9],[208,88,170],[208,38,170]])} fill="var(--rust-dark)" />
-    <polygon points={face([[158,38,170],[208,38,170],[208,88,170],[158,88,170]])} fill="var(--rust-light)" />
-    {[26, 49, 72, 95, 118, 141, 164].map(z => <>
-      <polyline points={face([[158,88,z],[208,88,z],[208,38,z]])} stroke="var(--paper)" stroke-width="1.3" />
-      {[168,181,194].map(x => <path d={`M${point(x,88,z-6)} L${point(x,88,z-15)}`} stroke="var(--paper)" stroke-width="4" />)}
-      {[49,62,75].map(y => <path d={`M${point(208,y,z-6)} L${point(208,y,z-15)}`} stroke="var(--rust-light)" stroke-width="3" />)}
-    </>)}
-    <polygon points={face([[169,49,170],[197,49,170],[197,77,170],[169,77,170]])} fill="var(--rust-dark)" />
-    <polygon points={face([[169,77,170],[197,77,170],[197,77,193],[169,77,193]])} fill="var(--rust)" />
-    <polygon points={face([[197,49,170],[197,77,170],[197,77,193],[197,49,193]])} fill="var(--rust-dark)" />
-    <polygon points={face([[169,49,193],[197,49,193],[197,77,193],[169,77,193]])} fill="var(--paper)" />
-  </g>
-  <g class="drawing-annotations" stroke="var(--muted)" stroke-width=".7">
-    <path d="M437 48H520V276M516 48H524M516 276H524M88 330V361H279M88 357V365M279 357V365" />
-    <circle cx="437" cy="48" r="2.5" fill="var(--paper)" />
-    <path d="M56 295v18m-9-9h18M317 363v18m-9-9h18" />
-  </g>
+<svg
+  class="architecture"
+  width="320"
+  height="320"
+  viewBox="0 0 320 320"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label="未完成的高塔与城中建筑"
+>
+  <line x1="60" y1="260" x2="260" y2="260" class="base" />
+
+  <rect x="98" y="238" width="18" height="22" class="dark" />
+  <rect x="124" y="214" width="24" height="46" class="dark" />
+
+  <path
+    class="red"
+    d="M160 260
+      L160 180
+      L175 166
+      L175 112
+      L189 100
+      L189 78
+      L205 78
+      L205 207
+      L193 220
+      L193 260
+      Z"
+  />
+
+  <path
+    class="red"
+    d="M191 58
+      L206 47
+      L206 68
+      L191 79
+      Z"
+  />
+
+  <line x1="198.5" y1="33" x2="198.5" y2="49" class="thin" />
+
+  <path
+    d="M205 260
+      L205 205
+      L228 223
+      L228 260"
+    class="line"
+  />
+
+  <rect x="228" y="236" width="34" height="24" class="line" />
+  <line x1="221" y1="82" x2="221" y2="205" class="dash" />
+
+  <path
+    d="M218 144
+      A72 72 0 0 1 249 250"
+    class="line"
+  />
 </svg>

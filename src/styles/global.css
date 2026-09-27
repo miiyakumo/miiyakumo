@@ -42,6 +42,12 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--rust); outline-
 .home-invitation { margin: 0; font: 400 clamp(17px, 1.5vw, 21px)/1.95 var(--serif); }
 .home-drawing { margin: 0 -12px 0 0; }
 .architecture { display: block; width: 100%; height: auto; }
+.architecture .red { fill: #B33A2E; }
+.architecture .dark { fill: #3A312D; }
+.architecture .line { stroke: #8A7F75; stroke-width: 2; fill: none; }
+.architecture .thin { stroke: #8A7F75; stroke-width: 1.5; fill: none; }
+.architecture .dash { stroke: #8A7F75; stroke-width: 1.5; stroke-dasharray: 8 8; fill: none; }
+.architecture .base { stroke: #6F655D; stroke-width: 2; }
 .drawing-grid { color: var(--line); }
 .home-collections { display: grid; grid-template-columns: .9fr 1.1fr; margin: 0 0 75px; padding-top: 40px; border-top: 1px solid var(--line); }
 .home-city { padding-right: 48px; }
