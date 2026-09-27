@@ -1,11 +1,12 @@
 ---
 title: "文章标题"
-pubDate: 2026-09-26
+pubDate: 2026-09-27 # 替换成实际发布日期
 kind: essay # log、essay、tutorial、fanwork
 summary: "一句话摘要，会显示在文章列表和首页。"
 tags: []
-fandom: "作品 / 世界观" # 二创分类可选
-contentNote: "内容提示" # 二创分类可选
+# 仅二创需要时取消注释并填写：
+# fandom: "作品 / 世界观"
+# contentNote: "内容提示"
 draft: true # 完成后改为 false 或删除此行
 ---
 
