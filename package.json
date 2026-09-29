@@ -3,17 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "workspaces": [
-    "apps/phantom-air-raid"
-  ],
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && npm run build:game",
-    "build:game": "npm --workspace phantom-air-raid run build",
-    "preview": "astro preview",
-    "verify": "npm --workspace phantom-air-raid run verify",
-    "verify:gameplay": "npm --workspace phantom-air-raid run verify:gameplay",
-    "verify:production": "npm run build && npm --workspace phantom-air-raid run verify:production"
+    "build": "astro build",
+    "preview": "astro preview"
   },
   "devDependencies": {
     "astro": "^6.0.0"

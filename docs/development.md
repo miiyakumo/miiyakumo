@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-站点默认在 `http://localhost:4321/`。现有游戏是独立应用，源代码位于 `apps/phantom-air-raid/`，构建后直接部署在 `/projects/phantom-air-raid/`。
+站点默认在 `http://localhost:4321/`。《幻翼合体：空袭升级》由独立仓库维护并部署：https://github.com/miiyakumo/phantom-air-raid ，试玩地址为 https://miiyakumo.github.io/phantom-air-raid/ 。个人站仅展示项目卡片。
 
 ## 添加文章
 
@@ -23,10 +23,9 @@ npm run dev
 
 ## 项目与发布
 
-- `apps/phantom-air-raid/`：Phaser 游戏源码和游戏专用验证脚本
 - `public/projects/spotted-dove-cycling/`：直接部署的独立互动网页
 - `public/legacy/touhou-chess.html`：保留的旧东方棋页面
-- `.github/workflows/pages.yml`：构建个人站和游戏，然后发布到 GitHub Pages
+- `.github/workflows/pages.yml`：构建个人站并发布到 GitHub Pages
 
 提交到 `main` 会触发 GitHub Pages 部署，地址为 https://miiyakumo.github.io/miiyakumo/ 。
 
