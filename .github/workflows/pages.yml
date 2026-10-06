@@ -25,6 +25,15 @@ jobs:
       - name: Checkout personal site
         uses: actions/checkout@v6
 
+      - name: Verify source repository token
+        env:
+          SOURCE_TOKEN: ${{ secrets.MIIYAKUMO_SOURCE_TOKEN }}
+        run: |
+          if [ -z "${SOURCE_TOKEN:-}" ]; then
+            echo "::error::MIIYAKUMO_SOURCE_TOKEN is not configured."
+            exit 1
+          fi
+
       - name: Checkout Arcana
         uses: actions/checkout@v6
         with:
@@ -32,7 +41,7 @@ jobs:
           ref: main
           path: _arcana
           fetch-depth: 1
-          token: ${{ secrets.MIIYAKUMO_SOURCE_TOKEN || github.token }}
+          token: ${{ secrets.MIIYAKUMO_SOURCE_TOKEN }}
 
       - name: Checkout Phantom Air Raid
         uses: actions/checkout@v6
@@ -41,7 +50,7 @@ jobs:
           ref: main
           path: _phantom_air_raid
           fetch-depth: 1
-          token: ${{ secrets.MIIYAKUMO_SOURCE_TOKEN || github.token }}
+          token: ${{ secrets.MIIYAKUMO_SOURCE_TOKEN }}
 
       - name: Setup Node for personal site
         uses: actions/setup-node@v4
