@@ -4,7 +4,7 @@ summary: "Minecraft 同人题材的单机网页 STG。躲避攻击、自动战�
 kind: game
 status: active
 tags: [游戏, Phaser, TypeScript]
-demoUrl: https://miiyakumo.github.io/phantom-air-raid/
+demoUrl: /phantom-air-raid/
 sourceUrl: https://github.com/miiyakumo/phantom-air-raid
 featured: true
 ---

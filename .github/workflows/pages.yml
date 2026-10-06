@@ -5,7 +5,7 @@ on:
     branches: [main]
   workflow_dispatch:
   repository_dispatch:
-    types: [arcana-updated]
+    types: [arcana-updated, phantom-air-raid-updated]
 
 permissions:
   contents: read
@@ -17,7 +17,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       SITE_BASE_PATH: /miiyakumo
     steps:
@@ -32,7 +32,16 @@ jobs:
           path: _arcana
           fetch-depth: 1
 
-      - uses: actions/setup-node@v4
+      - name: Checkout Phantom Air Raid
+        uses: actions/checkout@v6
+        with:
+          repository: miiyakumo/phantom-air-raid
+          ref: main
+          path: _phantom_air_raid
+          fetch-depth: 1
+
+      - name: Setup Node for personal site
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: npm
@@ -46,7 +55,26 @@ jobs:
           cp _arcana/index.html _arcana/app.js _arcana/style.css dist/arcana/
           cp -R _arcana/assets dist/arcana/assets
           echo "Arcana bundled at /miiyakumo/arcana/"
-          du -sh dist dist/arcana
+
+      - name: Setup Node for Phantom Air Raid
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: _phantom_air_raid/package-lock.json
+
+      - name: Build Phantom Air Raid
+        working-directory: _phantom_air_raid
+        run: |
+          npm ci
+          npm run build
+
+      - name: Integrate Phantom Air Raid into Pages artifact
+        run: |
+          mkdir -p dist/phantom-air-raid
+          cp -R _phantom_air_raid/dist/. dist/phantom-air-raid/
+          echo "Phantom Air Raid bundled at /miiyakumo/phantom-air-raid/"
+          du -sh dist dist/arcana dist/phantom-air-raid
 
       - uses: actions/upload-pages-artifact@v4
         with:
