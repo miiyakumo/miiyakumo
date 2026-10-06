@@ -1,0 +1,90 @@
+---
+import { getCollection, render } from 'astro:content';
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import { withBase } from '../../../lib/paths';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('fiction', ({ data }) => !data.draft);
+  const chapters = entries.filter(
+    entry => entry.data.series !== undefined && entry.data.chapter !== undefined,
+  );
+
+  return chapters.map(entry => {
+    const series = entry.data.series as string;
+    const work = entries.find(candidate => candidate.id === series + '/index');
+    if (!work) {
+      throw new Error('Published fiction chapter "' + entry.id + '" references missing series "' + series + '".');
+    }
+
+    const siblings = chapters
+      .filter(candidate => candidate.data.series === series)
+      .sort((a, b) => (a.data.chapter ?? 0) - (b.data.chapter ?? 0));
+    const index = siblings.findIndex(candidate => candidate.id === entry.id);
+    const previous = index > 0 ? siblings[index - 1] : undefined;
+    const next = index >= 0 && index < siblings.length - 1 ? siblings[index + 1] : undefined;
+    const chapter = entry.id.split('/').pop() ?? entry.id;
+
+    return {
+      params: { series, chapter },
+      props: { entry, work, previous, next, series },
+    };
+  });
+}
+
+const { entry, work, previous, next, series } = Astro.props;
+const { Content } = await render(entry);
+const date = entry.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+const chapterSlug = (id: string) => id.split('/').pop() ?? id;
+---
+
+<SiteLayout
+  title={entry.data.title + ' — ' + work.data.title + ' — miiyakumo'}
+  current="fiction"
+  description={entry.data.summary}
+>
+  <article class="shell prose-wrap fiction-chapter">
+    <div class="prose-meta">
+      <a href={withBase('/fiction/' + series + '/')}>{work.data.title}</a>
+      <span>第 {entry.data.chapter} 章</span>
+      <time datetime={entry.data.pubDate.toISOString()}>{date}</time>
+    </div>
+
+    <header class="prose">
+      <h1>{entry.data.title}</h1>
+      {entry.data.summary && <p class="prose-summary">{entry.data.summary}</p>}
+      {entry.data.cover && <img class="article-cover" src={withBase(entry.data.cover)} alt={entry.data.title} />}
+    </header>
+
+    {(entry.data.contentNote ?? work.data.contentNote) && (
+      <p class="empty-state">内容提示：{entry.data.contentNote ?? work.data.contentNote}</p>
+    )}
+
+    <div class="prose-body"><Content /></div>
+
+    {entry.data.tags.length > 0 && (
+      <div class="card-foot">{entry.data.tags.map(tag => <span class="tag">{tag}</span>)}</div>
+    )}
+
+    <nav class="fiction-chapter-nav" aria-label="章节导航">
+      <div>
+        {previous && (
+          <a href={withBase('/fiction/' + series + '/' + chapterSlug(previous.id) + '/')}>
+            <span aria-hidden="true">←</span>
+            <small>上一章</small>
+            <strong>{previous.data.title}</strong>
+          </a>
+        )}
+      </div>
+      <a class="fiction-chapter-home" href={withBase('/fiction/' + series + '/')}>目录</a>
+      <div class="fiction-next">
+        {next && (
+          <a href={withBase('/fiction/' + series + '/' + chapterSlug(next.id) + '/')}>
+            <small>下一章</small>
+            <strong>{next.data.title}</strong>
+            <span aria-hidden="true">→</span>
+          </a>
+        )}
+      </div>
+    </nav>
+  </article>
+</SiteLayout>

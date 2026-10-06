@@ -4,7 +4,7 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
-  current?: 'articles' | 'projects';
+  current?: 'articles' | 'fiction' | 'projects';
 }
 const {
   title = '未竟之事 — miiyakumo',
@@ -13,6 +13,7 @@ const {
 } = Astro.props;
 const navItems = [
   { href: '/articles/', label: '城中之囚', key: 'articles' },
+  { href: '/fiction/', label: '小说', key: 'fiction' },
   { href: '/projects/', label: '筑塔之人', key: 'projects' },
 ];
 ---

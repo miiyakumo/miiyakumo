@@ -1,0 +1,89 @@
+---
+import { getCollection, render } from 'astro:content';
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import { withBase } from '../../../lib/paths';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('fiction', ({ data }) => !data.draft);
+  return entries
+    .filter(entry => entry.id.endsWith('/index'))
+    .map(work => {
+      const series = work.id.slice(0, -'/index'.length);
+      const chapters = entries
+        .filter(entry => entry.data.series === series && entry.data.chapter !== undefined)
+        .sort((a, b) => (a.data.chapter ?? 0) - (b.data.chapter ?? 0));
+      return { params: { series }, props: { work, chapters, series } };
+    });
+}
+
+const { work, chapters, series } = Astro.props;
+const { Content } = await render(work);
+const statusLabels = {
+  ongoing: '连载中',
+  completed: '已完结',
+  hiatus: '暂停',
+};
+const kindLabels = {
+  original: '原创',
+  fanwork: '二创',
+};
+const status = work.data.status ? statusLabels[work.data.status] : undefined;
+const kind = work.data.kind ? kindLabels[work.data.kind] : undefined;
+const updated = work.data.updatedDate ?? work.data.pubDate;
+const date = updated.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+const firstChapter = chapters[0];
+const chapterSlug = (id: string) => id.split('/').pop() ?? id;
+---
+
+<SiteLayout title={work.data.title + ' — miiyakumo'} current="fiction" description={work.data.summary}>
+  <article class="shell fiction-work-wrap">
+    <header class="fiction-work-head">
+      <div class="fiction-work-meta">
+        {status && <span>{status}</span>}
+        {kind && <span>{kind}</span>}
+        {work.data.fandom && <span>{work.data.fandom}</span>}
+        <span>{chapters.length} 章</span>
+        <time datetime={updated.toISOString()}>{date}</time>
+      </div>
+      <h1>{work.data.title}</h1>
+      <p class="fiction-work-summary">{work.data.summary}</p>
+      {work.data.cover && <img class="article-cover" src={withBase(work.data.cover)} alt={work.data.title} />}
+      {firstChapter && (
+        <a class="fiction-start" href={withBase('/fiction/' + series + '/' + chapterSlug(firstChapter.id) + '/')}>
+          从第一章开始 <span aria-hidden="true">→</span>
+        </a>
+      )}
+    </header>
+
+    {work.data.contentNote && <p class="empty-state">内容提示：{work.data.contentNote}</p>}
+
+    <div class="prose-body fiction-intro"><Content /></div>
+
+    <section class="fiction-toc" aria-labelledby="fiction-toc-title">
+      <div class="fiction-toc-head">
+        <h2 id="fiction-toc-title">目录</h2>
+        <span>{chapters.length} 章</span>
+      </div>
+      {chapters.length === 0 ? (
+        <p class="empty-state">章节还没有发布。</p>
+      ) : (
+        <ol class="fiction-toc-list">
+          {chapters.map(chapter => (
+            <li>
+              <a href={withBase('/fiction/' + series + '/' + chapterSlug(chapter.id) + '/')}>
+                <span class="fiction-chapter-number">{chapter.data.chapter}</span>
+                <span class="fiction-chapter-title">{chapter.data.title}</span>
+                <time datetime={chapter.data.pubDate.toISOString()}>
+                  {chapter.data.pubDate.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' })}
+                </time>
+              </a>
+            </li>
+          ))}
+        </ol>
+      )}
+    </section>
+
+    <div class="card-foot">{work.data.tags.map(tag => <span class="tag">{tag}</span>)}</div>
+    <a class="back-to-city" href={withBase('/fiction/')}>← 全部小说</a>
+  </article>
+</SiteLayout>

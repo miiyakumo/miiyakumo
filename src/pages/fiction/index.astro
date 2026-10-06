@@ -1,0 +1,65 @@
+---
+import { getCollection } from 'astro:content';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { withBase } from '../../lib/paths';
+
+const entries = await getCollection('fiction', ({ data }) => !data.draft);
+const works = entries
+  .filter(entry => entry.id.endsWith('/index'))
+  .map(entry => {
+    const series = entry.id.slice(0, -'/index'.length);
+    const chapterCount = entries.filter(
+      chapter => chapter.data.series === series && chapter.data.chapter !== undefined,
+    ).length;
+    return { entry, series, chapterCount };
+  })
+  .sort((a, b) => {
+    const aDate = a.entry.data.updatedDate ?? a.entry.data.pubDate;
+    const bDate = b.entry.data.updatedDate ?? b.entry.data.pubDate;
+    return bDate.valueOf() - aDate.valueOf();
+  });
+
+const statusLabels = {
+  ongoing: '连载中',
+  completed: '已完结',
+  hiatus: '暂停',
+};
+---
+
+<SiteLayout title="小说 — miiyakumo" current="fiction" description="连载小说与完整作品。">
+  <section class="shell">
+    <header class="page-heading">
+      <div>
+        <h1>小说</h1>
+        <p>作品主页、章节目录，以及还在继续的生活。</p>
+      </div>
+    </header>
+
+    <div class="fiction-archive">
+      {works.length === 0 && <p class="empty-state">这里还没有作品。</p>}
+      <div class="fiction-list">
+        {works.map(({ entry, series, chapterCount }) => {
+          const status = entry.data.status ? statusLabels[entry.data.status] : '作品';
+          const date = (entry.data.updatedDate ?? entry.data.pubDate).toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          });
+          return (
+            <article class="fiction-card">
+              <div class="fiction-card-meta">
+                <span>{status}</span>
+                <span>{chapterCount} 章</span>
+                {entry.data.fandom && <span>{entry.data.fandom}</span>}
+                <time datetime={(entry.data.updatedDate ?? entry.data.pubDate).toISOString()}>{date}</time>
+              </div>
+              <h2><a href={withBase('/fiction/' + series + '/')}>{entry.data.title}</a></h2>
+              <p>{entry.data.summary}</p>
+              <div class="card-foot">{entry.data.tags.map(tag => <span class="tag">{tag}</span>)}</div>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+</SiteLayout>

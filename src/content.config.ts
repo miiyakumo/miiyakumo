@@ -16,6 +16,25 @@ const articles = defineCollection({
   }),
 });
 
+const fiction = defineCollection({
+  loader: glob({ base: './src/content/fiction', pattern: '**/*.md' }),
+  schema: z.object({
+    title: z.string(),
+    pubDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
+    summary: z.string(),
+    tags: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
+    cover: z.string().optional(),
+    kind: z.enum(['original', 'fanwork']).optional(),
+    fandom: z.string().optional(),
+    contentNote: z.string().optional(),
+    status: z.enum(['ongoing', 'completed', 'hiatus']).optional(),
+    series: z.string().optional(),
+    chapter: z.number().nonnegative().optional(),
+  }),
+});
+
 const projects = defineCollection({
   loader: glob({ base: './src/content/projects', pattern: '**/*.md' }),
   schema: z.object({
@@ -30,4 +49,4 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { articles, projects };
+export const collections = { articles, fiction, projects };
