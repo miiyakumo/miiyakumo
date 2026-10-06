@@ -5,6 +5,5 @@ kind: game
 status: active
 tags: [游戏, Phaser, TypeScript]
 demoUrl: /phantom-air-raid/
-sourceUrl: https://github.com/miiyakumo/phantom-air-raid
 featured: true
 ---
