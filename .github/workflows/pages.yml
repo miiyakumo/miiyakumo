@@ -1,4 +1,5 @@
 name: Deploy personal site to GitHub Pages
+# Private source repositories are checked out with MIIYAKUMO_SOURCE_TOKEN when configured.
 
 on:
   push:
