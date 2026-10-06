@@ -66,7 +66,9 @@ jobs:
           mkdir -p dist/arcana
           cp _arcana/index.html _arcana/app.js _arcana/style.css dist/arcana/
           cp -R _arcana/assets dist/arcana/assets
-          echo "Arcana bundled at /miiyakumo/arcana/"
+          ARCANA_SHA="$(git -C _arcana rev-parse --short=12 HEAD)"
+          sed -i "s#./style.css#./style.css?v=${ARCANA_SHA}#; s#./app.js#./app.js?v=${ARCANA_SHA}#" dist/arcana/index.html
+          echo "Arcana bundled at /miiyakumo/arcana/ (version ${ARCANA_SHA})"
 
       - name: Setup Node for Phantom Air Raid
         uses: actions/setup-node@v4
