@@ -5,6 +5,5 @@ kind: site
 status: active
 tags: [塔罗, Cartomancy, 易经]
 demoUrl: /arcana/
-sourceUrl: https://github.com/miiyakumo/arcana
 featured: true
 ---
