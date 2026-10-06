@@ -31,6 +31,7 @@ jobs:
           ref: main
           path: _arcana
           fetch-depth: 1
+          token: ${{ secrets.MIIYAKUMO_SOURCE_TOKEN || github.token }}
 
       - name: Checkout Phantom Air Raid
         uses: actions/checkout@v6
@@ -39,6 +40,7 @@ jobs:
           ref: main
           path: _phantom_air_raid
           fetch-depth: 1
+          token: ${{ secrets.MIIYAKUMO_SOURCE_TOKEN || github.token }}
 
       - name: Setup Node for personal site
         uses: actions/setup-node@v4
