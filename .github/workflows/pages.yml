@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  repository_dispatch:
+    types: [arcana-updated]
 
 permissions:
   contents: read
@@ -15,17 +17,37 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     env:
       SITE_BASE_PATH: /miiyakumo
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout personal site
+        uses: actions/checkout@v6
+
+      - name: Checkout Arcana
+        uses: actions/checkout@v6
+        with:
+          repository: miiyakumo/arcana
+          ref: main
+          path: _arcana
+          fetch-depth: 1
+
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: npm
+
       - run: npm ci
       - run: npm run build
+
+      - name: Integrate Arcana into Pages artifact
+        run: |
+          mkdir -p dist/arcana
+          cp _arcana/index.html _arcana/app.js _arcana/style.css dist/arcana/
+          cp -R _arcana/assets dist/arcana/assets
+          echo "Arcana bundled at /miiyakumo/arcana/"
+          du -sh dist dist/arcana
+
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist
@@ -33,7 +55,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     permissions:
       pages: write
       id-token: write
